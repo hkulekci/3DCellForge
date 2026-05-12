@@ -23,7 +23,7 @@ import {
 } from './domain/cellCatalog.js'
 import { normalizeSettings, normalizeUiState } from './domain/preferences.js'
 import { downloadBlob, downloadJson } from './lib/downloads.js'
-import { prepareImageForUpload } from './lib/imagePipeline.js'
+import { prepareGenerationDataUrl, prepareImageForUpload } from './lib/imagePipeline.js'
 import { loadStoredValue, storeValue } from './lib/storage.js'
 import { create3dGeneration, getProviderLabel, getProviderPlan, uploadLocal3dModel, waitFor3dModel } from './services/modelApi.js'
 import { BottomDeck } from './components/BottomDeck.jsx'
@@ -170,6 +170,12 @@ function App() {
   async function generateCustomCellModel(customCell, imageUrl, fileName, requestedProvider = settings.generationMode) {
     const providers = getProviderPlan(requestedProvider)
     const errors = []
+    let preparedImageUrl = imageUrl
+    try {
+      preparedImageUrl = await prepareGenerationDataUrl(imageUrl)
+    } catch (error) {
+      console.warn('Generation image preprocessing failed; using original.', error)
+    }
 
     for (const provider of providers) {
       const label = getProviderLabel(provider)
@@ -206,10 +212,11 @@ function App() {
 
         const task = await create3dGeneration({
           provider,
-          imageDataUrl: imageUrl,
+          imageDataUrl: preparedImageUrl,
           fileName,
           prompt: getGenerationPrompt(customCell),
           modelId: provider === 'fal' ? settings.falModelId : undefined,
+          quality: provider === 'fal' ? settings.falQuality : undefined,
         })
 
         updateCustomCell(customCell.id, (cell) => ({

@@ -1,5 +1,5 @@
 export const SETTINGS_STORAGE_KEY = 'bio-demo-settings'
-export const SETTINGS_STORAGE_VERSION = 4
+export const SETTINGS_STORAGE_VERSION = 5
 export const UI_STATE_STORAGE_KEY = 'bio-demo-ui-state'
 export const UI_STATE_STORAGE_VERSION = 1
 export const FAL_MODEL_OPTIONS = [
@@ -11,12 +11,16 @@ export const FAL_MODEL_OPTIONS = [
 ]
 export const FAL_MODEL_IDS = new Set(FAL_MODEL_OPTIONS.map((option) => option.id))
 export const DEFAULT_FAL_MODEL = FAL_MODEL_OPTIONS[0].id
+export const FAL_QUALITY_OPTIONS = ['low', 'medium', 'high']
+export const FAL_QUALITY_IDS = new Set(FAL_QUALITY_OPTIONS)
+export const DEFAULT_FAL_QUALITY = 'medium'
 export const DEFAULT_SETTINGS = {
   quality: 'balanced',
   compactUi: false,
   generationProvider: 'tripo',
   generationMode: 'tripo',
   falModelId: DEFAULT_FAL_MODEL,
+  falQuality: DEFAULT_FAL_QUALITY,
   settingsVersion: SETTINGS_STORAGE_VERSION,
 }
 

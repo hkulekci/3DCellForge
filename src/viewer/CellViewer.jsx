@@ -1,6 +1,6 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { ContactShadows, Line, OrbitControls, RoundedBox, useGLTF, useTexture } from '@react-three/drei'
+import { ContactShadows, Environment, Line, OrbitControls, RoundedBox, useGLTF, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { CELL_BODY, CELL_TYPES, ORGANELLES } from '../domain/cellData.js'
 import { getModelCellId } from '../domain/cellCatalog.js'
@@ -840,6 +840,7 @@ function CinematicReliefScene({ imageUrl, autoRotate, onSelectOrganelle }) {
       }}
     >
       <color attach="background" args={['#f6efdf']} />
+      <Environment preset="studio" environmentIntensity={0.85} />
       <ambientLight intensity={0.84} />
       <directionalLight castShadow position={[3.6, 4.8, 5.8]} intensity={3.8} color="#fff7e8" shadow-mapSize={[1024, 1024]} />
       <directionalLight position={[-4.2, 2.1, 3.2]} intensity={1.55} color="#d6eef8" />
@@ -975,6 +976,7 @@ export function CellScene({ selectedCell, modelCellId, referenceImageUrl, genera
       fallback={<CellFallback selectedCell={selectedCell} modelCellId={modelCellId} referenceImageUrl={referenceImageUrl} selectedOrganelle={selectedOrganelle} onSelectOrganelle={onSelectOrganelle} />}
     >
       <color attach="background" args={['#f5efdf']} />
+      <Environment preset="studio" environmentIntensity={0.9} />
       <ambientLight intensity={0.82} />
       <directionalLight castShadow position={[4, 5, 5]} intensity={3.4} color="#fff7ed" shadow-mapSize={[1024, 1024]} />
       <directionalLight position={[-4.5, 2.6, 3]} intensity={1.65} color="#dbeafe" />

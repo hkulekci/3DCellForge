@@ -155,6 +155,28 @@ async function buildPersistentImageDataUrl(sourceUrl, maxEdge = MAX_PERSISTED_IM
   return getCanvasDataUrl(resampleCanvas(cutoutCanvas, COMPACT_PERSISTED_IMAGE_EDGE))
 }
 
+export async function prepareGenerationDataUrl(dataUrl, { padColor = '#ffffff', maxEdge = MAX_PERSISTED_IMAGE_EDGE } = {}) {
+  if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) return dataUrl
+
+  const image = await loadImageFromUrl(dataUrl)
+  const width = image.naturalWidth || image.width
+  const height = image.naturalHeight || image.height
+  if (!width || !height) return dataUrl
+
+  const size = Math.max(width, height)
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const context = canvas.getContext('2d')
+  context.fillStyle = padColor
+  context.fillRect(0, 0, size, size)
+  context.imageSmoothingEnabled = true
+  context.imageSmoothingQuality = 'high'
+  context.drawImage(image, Math.round((size - width) / 2), Math.round((size - height) / 2))
+
+  return getCanvasDataUrl(resampleCanvas(canvas, maxEdge))
+}
+
 export async function prepareImageForUpload(file) {
   const sourceUrl = await fileToDataUrl(file)
   if (typeof sourceUrl !== 'string' || !file.type.startsWith('image/')) {

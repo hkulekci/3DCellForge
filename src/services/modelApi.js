@@ -37,11 +37,11 @@ export function getProviderLabel(provider) {
   return GENERATION_PROVIDER_OPTIONS.find((item) => item.id === provider)?.label ?? 'Tripo'
 }
 
-export async function create3dGeneration({ provider, imageDataUrl, fileName, prompt, modelId }) {
+export async function create3dGeneration({ provider, imageDataUrl, fileName, prompt, modelId, quality }) {
   const response = await fetch(apiUrl('/api/3d/generate'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ provider, imageDataUrl, fileName, prompt, modelId }),
+    body: JSON.stringify({ provider, imageDataUrl, fileName, prompt, modelId, quality }),
   })
 
   return readApiResponse(response)

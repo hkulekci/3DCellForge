@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
 
-import { FAL_MODEL_OPTIONS } from '../config/appConfig.js'
+import { FAL_MODEL_OPTIONS, FAL_QUALITY_OPTIONS } from '../config/appConfig.js'
 import { CELL_TYPES, KHRONOS_REFERENCE_CELLS, WORKSPACE_PANELS } from '../domain/cellData.js'
 import { getAvailableOrganelleIds, getCell, getCellProfile, getOrganelleDetail } from '../domain/cellCatalog.js'
 import { CellThumb } from './CellThumb.jsx'
@@ -232,6 +232,24 @@ export function WorkspaceDrawer({
               ))}
             </select>
           </label>
+          <div className="settings-row">
+            <span>
+              <strong>Fal Quality</strong>
+              <small>Higher = better mesh and textures but slower and pricier.</small>
+            </span>
+            <div className="segmented">
+              {FAL_QUALITY_OPTIONS.map((quality) => (
+                <button
+                  key={quality}
+                  type="button"
+                  className={settings.falQuality === quality ? 'active' : ''}
+                  onClick={() => onUpdateSettings({ ...settings, falQuality: quality })}
+                >
+                  {quality}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )
     }

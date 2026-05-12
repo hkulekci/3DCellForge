@@ -200,11 +200,39 @@ function sanitizeFalFileName(fileName, fallbackExt = 'webp') {
 function buildFalInput(modelId, imageUrl, payload) {
   const input = {}
   const lower = modelId.toLowerCase()
+  const quality = normalizeFalQuality(payload.quality)
 
   if (lower.includes('hyper3d/rodin')) {
     input.input_image_urls = [imageUrl]
+    input.tier = quality === 'low' ? 'Sketch' : 'Regular'
+    input.quality = quality === 'low' ? 'low' : quality === 'high' ? 'high' : 'medium'
+    input.material = 'PBR'
+    input.geometry_file_format = 'glb'
   } else if (lower.includes('hunyuan3d')) {
     input.input_image_url = imageUrl
+    input.textured_mesh = true
+    input.octree_resolution = quality === 'high' ? 384 : quality === 'low' ? 192 : 256
+    input.num_inference_steps = quality === 'high' ? 50 : quality === 'low' ? 30 : 50
+    input.guidance_scale = 5.5
+  } else if (lower.includes('trellis')) {
+    input.image_url = imageUrl
+    input.texture_size = quality === 'high' ? 2048 : quality === 'low' ? 512 : 1024
+    input.ss_sampling_steps = quality === 'high' ? 20 : 12
+    input.slat_sampling_steps = quality === 'high' ? 20 : 12
+    input.mesh_simplify = quality === 'high' ? 0.92 : 0.95
+  } else if (lower.includes('triposr')) {
+    input.image_url = imageUrl
+    input.do_remove_background = true
+    input.mc_resolution = quality === 'high' ? 320 : quality === 'low' ? 192 : 256
+    input.foreground_ratio = 0.85
+    input.output_format = 'glb'
+  } else if (lower.includes('tripo3d')) {
+    input.image_url = imageUrl
+    input.pbr = true
+    input.texture = true
+    input.texture_quality = quality === 'high' ? 'detailed' : 'standard'
+    input.geometry_quality = quality === 'high' ? 'detailed' : 'standard'
+    input.auto_size = true
   } else {
     input.image_url = imageUrl
   }
@@ -213,6 +241,12 @@ function buildFalInput(modelId, imageUrl, payload) {
   if (payload.seed !== undefined) input.seed = Number(payload.seed)
 
   return input
+}
+
+function normalizeFalQuality(value) {
+  const v = String(value || '').toLowerCase()
+  if (v === 'low' || v === 'medium' || v === 'high') return v
+  return 'medium'
 }
 
 function getFalProgress(raw, status) {
